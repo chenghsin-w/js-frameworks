@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Vue - Todos</title>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <script src="/javascripts/vue/lib/vue.js"></script>
+    <script src="/javascripts/vue/lib/jquery-3.2.1.min.js"></script>
+    <script src="/javascripts/vue/main.js"></script>
+  </head>
+  <body>
+    <!-- content div is a mounting point and will be replaced with Vue DOM -->
+    <div id="content"></div>
+    <script type="text/x-template" id="todo-template">
+      <div id="todos">
+        <header>
+          <h1>Vue - Todos</h1>
+          <!-- two-way data binding for newTask and add keyup enter event listener -->
+          <input class="new-task" ref="autofocus" autocomplete="off"
+            type="text"
+            placeholder="Press `Enter` to add a new task"
+            v-model.trim.lazy="newTask"
+            v-on:keyup.enter="addTask" />
+        </header>
+        <section class="main" v-show="todos.length">
+          <p>double-click to edit the name of a task</p>
+          <ul class="todo-list">
+            <!-- loop through todos and show each task component with data and event binding -->
+            <task
+              v-for="task in todos"
+              v-bind:task="task"
+              v-bind:key="task.id"
+              v-bind:class="{ completed: task.done }"
+              v-on:delete="removeTask(task)">
+            </task>
+          </ul>
+        </section>
+      </div>
+    </script>
+
+    <script type="text/x-template" id="task-template">
+      <li>
+        <!-- add or remove the editing class for the div element  -->
+        <div class="view" v-bind:class="{ editing: editing }">
+          <!-- two-way data binding for task's done attribute -->
+          <input type="checkbox" v-model="task.done" />
+          <!-- on double-click call editTask method -->
+          <label v-on:dblclick="editTask($event)">{{ task.name }}</label>
+          <!-- two-way data binding for task's name attribute add some event listeners -->
+          <input class="edit"
+            type="text"
+            v-model.trim.lazy="task.name"
+            v-on:blur="blur($event)"
+            v-on:keyup.enter="triggerBlur($event)"
+            v-focus="editing" />
+          <!-- the component can't delete itself, so send an event to its parent -->
+          <button class="remove" v-on:click="$emit('delete')">Remove</button>
+        </div>
+      </li>
+    </script>
+  </body>
+</html>

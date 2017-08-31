@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AngularJS - Todos</title>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <script src="/javascripts/angularjs/lib/angular.js"></script>
+    <script src="/javascripts/angularjs/main.js"></script>
+  </head>
+  <body ng-app="todos">
+    <div id="content">
+      <div id="todos" ng-controller="TodosController">
+        <header>
+          <h1>AngularJS - Todos</h1>
+          <!-- two-way data binding for newTask and add keyup enter event listener -->
+          <input class="new-task" autofocus autocomplete="off"
+            type="text"
+            placeholder="Press `Enter` to add a new task"
+            ng-model="newTask"
+            ng-model-options="{ updateOn: 'change' }"
+            ng-keyup="addTask($event)" />
+        </header>
+        <section class="main" ng-show="todos.length">
+          <p>double-click to edit the name of a task</p>
+          <ul class="todo-list">
+            <!-- loop through todos and show each task component with data and event binding -->
+            <task ng-repeat="task in todos"
+              task="task"
+              ng-class="{ completed: task.done }"
+              on-delete="removeTask(task)">
+            </task>
+          </ul>
+        </section>
+      </div>
+    </div>
+
+    <!-- task template -->
+    <script type="text/ng-template" id="task-template">
+      <li>
+        <!-- add or remove the editing class for the div element  -->
+        <div class="view" ng-class="{ editing: $ctrl.editing }">
+          <!-- two-way data binding for task's done attribute and call updateDone method -->
+          <input type="checkbox" ng-model="$ctrl.task.done" ng-change="$ctrl.updateDone()" />
+          <!--  -->
+          <label ng-dblclick="$ctrl.editing = !$ctrl.editing">{{ $ctrl.task.name }}</label>
+          <!-- two-way data binding for task's name attribute add some event listeners -->
+          <input class="edit"
+            type="text"
+            ng-model="$ctrl.task.name"
+            ng-model-options="{ updateOn: 'change' }"
+            ng-blur="$ctrl.blur($event)"
+            ng-keyup="$ctrl.triggerBlur($event)"
+            editing-focus="$ctrl.editing"
+            ng-change="$ctrl.updateName()" />
+          <!-- the component can't delete itself, so send an event to its parent -->
+          <button class="remove" ng-click="$ctrl.onDelete()">Remove</button>
+        </div>
+      </li>
+    </script>
+  </body>
+</html>
